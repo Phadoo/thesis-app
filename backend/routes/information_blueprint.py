@@ -2,12 +2,13 @@ from flask import Blueprint, jsonify, request
 from extensions import db, ma
 from routes.chemical_blueprint import Chemical, ChemicalSchema
 from routes.physical_blueprint import Physical, PhysicalSchema
+from flask_cors import CORS
 
 information_blueprint = Blueprint('information_data', __name__)
 
 class Information(db.Model):
     __tablename__ = 'tbl_information'
-    info_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     location = db.Column(db.Text())
     update_text = db.Column(db.Text())
     status = db.Column(db.Text())
@@ -27,7 +28,7 @@ class Information(db.Model):
 
 class InformationSchema(ma.Schema):
     class Meta:
-        fields = ('info_id','location', 'update_text', 'status', 'physical_id', 'chemical_id')
+        fields = ('id','location', 'update_text', 'status', 'physical_id', 'chemical_id')
 
 information_schema = InformationSchema()
 informations_schema = InformationSchema(many=True)
@@ -146,19 +147,48 @@ def get_all_data(id):
 @information_blueprint.route('/get_all_data', methods = ['GET'])
 def get_complete_data():
     try:
-        info_table = Information.query.all()
-        physical_table = Physical.query.all()
-        chemical_table = Chemical.query.all()
+        query_result = db.session.query(
+            Information.id,
+            Information.location,
+            Information.update_text,
+            Information.status,
+            Physical.temperature,
+            Physical.ph,
+            Physical.tds,
+            Physical.turbidity,
+            Chemical.nitrate,
+            Chemical.zinc,
+            Chemical.chlorine
+        ).join(
+            Physical, Information.physical_id == Physical.physical_id
+        ).join(
+            Chemical, Information.chemical_id == Chemical.chemical_id
+        ).all()
 
-        serialized_info = information_schema.dump(info_table)
-        serialized_physical = physical_schema.dump(physical_table)
-        serialized_chemical = chemical_schema.dump(chemical_table)
+        result = [{
+            'id': row[0],
+            'location': row[1],
+            'update_text': row[2],
+            'status': row[3],
+            'temperature': row[4],
+            'ph': row[5],
+            'tds': row[6],
+            'turbidity': row[7],
+            'nitrate': row[8],
+            'zinc': row[9],
+            'chlorine': row[10]
+        } for row in query_result]
 
-        result = {
-            'information': serialized_info,
-            'physical': serialized_physical,
-            'chemical': serialized_chemical
-        }
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@information_blueprint.route('/get_test', methods = ['GET'])
+def get_test():
+    try:
+        test = Physical.query.all()
+
+        result = physicals_schema.dump(test)
 
         return jsonify(result)
     except Exception as e:

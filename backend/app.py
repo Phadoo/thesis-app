@@ -1,8 +1,11 @@
 from flask import Flask, jsonify
 from extensions import db
 from sqlalchemy import text
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:''@localhost/thesis_schema'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
