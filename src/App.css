@@ -1,0 +1,20 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter";
+}
+.container{
+  width: 100vw;
+  height: 100vh;
+  background: #ABABAB;
+}
+body{
+  margin: 0;
+  padding: 0;
+}
+.logo{
+  width: 30px;
+  cursor: pointer;
+}
+

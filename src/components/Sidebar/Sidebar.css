@@ -1,0 +1,41 @@
+.sidebar{
+  min-height: 100vh;
+  width: 270px;
+  background-color: #858585;
+}
+.sidebarlist{
+  height: auto;
+  width: 100%;
+}
+.sidebarlist li a{
+  height: 50px;
+  width: 100%;
+  display: flex;
+}
+.sidebarlist li a:hover #icon {
+  color: #4D4D4D;
+}
+.sidebarlist li.active a #icon {
+  color: #4D4D4D;
+}
+.row #icon {
+  align-items: center;
+}
+.row #title {
+  align-items: center; /* Center vertically */
+}
+
+
+.sidebar_menu {
+  padding: 30px;
+}
+.menu_label {
+  color: white;
+  font-weight: bolder;
+  font-size: xx-large;
+}
+.interface_label {
+  color: white;
+  font-weight: 100;
+  font-size: smaller;
+}
