@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import "../App.css";
 
@@ -15,6 +15,25 @@ import SpeedIcon from "@mui/icons-material/Speed";
 import WaterIcon from "@mui/icons-material/Water";
 
 export default function StatisticsPage() {
+  const [selectedRow, setSelectedRow] = useState(null);
+
+  const handleSelectedRow = (row) => {
+    setSelectedRow(row);
+  };
+
+  const {
+    temperature,
+    ph,
+    tds,
+    turbidity,
+    location,
+    update_text,
+    status,
+    chlorine,
+    nitrate,
+    zinc,
+  } = selectedRow || {};
+
   return (
     <Box className="container">
       <Box>
@@ -22,7 +41,7 @@ export default function StatisticsPage() {
           <Sidebar />
           <Box m="20px">
             <Box>
-              <Datagrid />
+              <Datagrid onRowSelection={handleSelectedRow} />
             </Box>
           </Box>
 
@@ -63,7 +82,13 @@ export default function StatisticsPage() {
                       <ThermostatIcon style={{ fontSize: 40 }} />
                     </Box>
                     <Box>
-                      <Statbox title="69°" />
+                      <Statbox
+                        title={
+                          temperature
+                            ? `${Math.round(parseFloat(temperature))}°`
+                            : ""
+                        }
+                      />
                     </Box>
                   </Box>
                 </Box>
@@ -76,7 +101,9 @@ export default function StatisticsPage() {
                       <SpeedIcon style={{ fontSize: 40 }} />
                     </Box>
                     <Box>
-                      <Statbox title="11" />
+                      <Statbox
+                        title={ph ? `${Math.round(parseFloat(ph))}` : ""}
+                      />
                     </Box>
                   </Box>
                 </Box>
@@ -89,7 +116,9 @@ export default function StatisticsPage() {
                   </Typography>
                   <Box display="flex" alignItems="center" gap="10px" mt="10px">
                     <Box ml="30px">
-                      <Statbox title="420" unit="ppm" />
+                      <Statbox
+                        title={tds ? `${Math.round(parseFloat(tds))}` : ""}
+                      />
                     </Box>
                   </Box>
                 </Box>
@@ -102,7 +131,13 @@ export default function StatisticsPage() {
                       <WaterIcon style={{ fontSize: 40 }} />
                     </Box>
                     <Box>
-                      <Statbox title="88" unit="ntu" />
+                      <Statbox
+                        title={
+                          turbidity
+                            ? `${Math.round(parseFloat(turbidity))}`
+                            : ""
+                        }
+                      />
                     </Box>
                   </Box>
                 </Box>
@@ -128,19 +163,13 @@ export default function StatisticsPage() {
                 gap="20px"
               >
                 <Box mt="5px">
-                  <Detailbox
-                    title="Location"
-                    description="Block 21 Lot 8, Phase 1, St. Joseph Village 6, Cabuyao, Laguna"
-                  />
+                  <Detailbox title="Location" description={location} />
                 </Box>
                 <Box>
-                  <Detailbox
-                    title="Last Update"
-                    description="January 21, 2024"
-                  />
+                  <Detailbox title="Last Update" description={update_text} />
                 </Box>
                 <Box>
-                  <Detailbox title="Status" description="Potable" />
+                  <Detailbox title="Status" description={status} />
                 </Box>
               </Box>
             </Box>

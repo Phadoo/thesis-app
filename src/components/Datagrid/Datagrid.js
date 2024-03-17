@@ -6,10 +6,11 @@ import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import Button from "@mui/material/Button";
 
-function Datagrid() {
+function Datagrid({ onRowSelection }) {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectionModel, setSelectionModel] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,7 +35,22 @@ function Datagrid() {
     return <div>Error: {error}</div>;
   }
 
-  const rows = [];
+  const handleRowClick = (params) => {
+    console.log("Row clicked:", params.row);
+  };
+
+  const handleSelectionModelChange = (newSelection) => {
+    setSelectionModel(newSelection);
+
+    if (onRowSelection) {
+      const selectedRow = newSelection.length > 0 ? rows.find(row => row.id === newSelection[0]) : null;
+      onRowSelection(selectedRow);
+    }
+
+    console.log(newSelection);
+  };
+
+  const rows = data;
 
   const columns = [
     {
@@ -73,8 +89,11 @@ function Datagrid() {
   return (
     <div style={{ height: "85vh", width: 900 }}>
       <DataGrid
-        rows={data}
+        rows={rows}
         columns={columns}
+        onRowClick={handleRowClick}
+        onRowSelectionModelChange={handleSelectionModelChange}
+        selectionModel={selectionModel}
         sx={{ backgroundColor: "#FFFFFF", borderRadius: "5px" }}
       />
     </div>
