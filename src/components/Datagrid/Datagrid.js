@@ -6,11 +6,26 @@ import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import Button from "@mui/material/Button";
 
+import DetailDialog from "../DetailDialog/DetailDialog";
+
 function Datagrid({ onRowSelection }) {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectionModel, setSelectionModel] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [dialogParams, setDialogParams] = useState(null);
+
+  const handleClickOpen = (params, row) => {
+    const { chlorine, nitrate, zinc } = row;
+    setDialogParams({ ...params, chlorine, nitrate, zinc });
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setDialogParams(null);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,7 +58,10 @@ function Datagrid({ onRowSelection }) {
     setSelectionModel(newSelection);
 
     if (onRowSelection) {
-      const selectedRow = newSelection.length > 0 ? rows.find(row => row.id === newSelection[0]) : null;
+      const selectedRow =
+        newSelection.length > 0
+          ? rows.find((row) => row.id === newSelection[0])
+          : null;
       onRowSelection(selectedRow);
     }
 
@@ -72,12 +90,14 @@ function Datagrid({ onRowSelection }) {
       field: "col4",
       headerName: "ACTIONS",
       width: 100,
-      renderCell: () => {
+      renderCell: (params) => {
+        const row = params.row;
         return (
           <Button
             variant="outlined"
             size="small"
             style={{ color: "black", borderColor: "black" }}
+            onClick={() => handleClickOpen(params, row)}
           >
             View
           </Button>
@@ -96,6 +116,7 @@ function Datagrid({ onRowSelection }) {
         selectionModel={selectionModel}
         sx={{ backgroundColor: "#FFFFFF", borderRadius: "5px" }}
       />
+      <DetailDialog open={open} onClose={handleClose} params={dialogParams} />
     </div>
   );
 }
