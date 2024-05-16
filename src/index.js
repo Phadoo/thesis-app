@@ -8,6 +8,8 @@ import HomePage from "./pages/HomePage";
 import StatisticsPage from "./pages/StatisticsPage";
 import ContactPage from "./pages/ContactPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import PredictPage from "./pages/PredictPage";
+import PredictPageV2 from "./pages/PredictPageV2";
 
 const router = createBrowserRouter([
   {
@@ -20,8 +22,8 @@ const router = createBrowserRouter([
     element: <StatisticsPage />,
   },
   {
-    path: "/contact",
-    element: <ContactPage />,
+    path: "/predict",
+    element: <PredictPageV2 />,
   },
 ]);
 

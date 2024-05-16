@@ -1,7 +1,7 @@
 import React from "react";
 
 import DashboardIcon from "@mui/icons-material/Home";
-import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
+import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 
 export const SideBarData = [
   {
@@ -10,8 +10,8 @@ export const SideBarData = [
     link: "/statistics",
   },
   {
-    title: "Profile",
+    title: "Predict",
     icon: <SupervisorAccountIcon />,
-    link: "/contact",
+    link: "/predict",
   },
 ];

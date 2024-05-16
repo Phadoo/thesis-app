@@ -2,7 +2,6 @@ from flask import Blueprint, jsonify, request
 from extensions import db, ma
 from routes.chemical_blueprint import Chemical, ChemicalSchema
 from routes.physical_blueprint import Physical, PhysicalSchema
-from flask_cors import CORS
 
 information_blueprint = Blueprint('information_data', __name__)
 
@@ -144,7 +143,7 @@ def get_all_data(id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
-@information_blueprint.route('/get_all_data', methods = ['GET'])
+@information_blueprint.route('/get_all_data', methods = ['GET']) # RETRIEVE ALL DATA FROM DB
 def get_complete_data():
     try:
         query_result = db.session.query(

@@ -7,7 +7,7 @@ import Datagrid from "../components/Datagrid/Datagrid";
 import Statbox from "../components/Statbox/Statbox";
 import Detailbox from "../components/Detailbox/Detailbox";
 
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import InputBase from "@mui/material/InputBase";
 
 import ThermostatIcon from "@mui/icons-material/Thermostat";
