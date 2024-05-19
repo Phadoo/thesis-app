@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import "../App.css";
 
 import Sidebar from "../components/Sidebar/Sidebar";
+import SidebarV3 from "../components/SidebarV3/SidebarV3";
+
 import Datagrid from "../components/Datagrid/Datagrid";
 import Statbox from "../components/Statbox/Statbox";
 import Detailbox from "../components/Detailbox/Detailbox";
@@ -38,7 +40,7 @@ export default function StatisticsPage() {
     <Box className="container">
       <Box>
         <Box display="flex">
-          <Sidebar />
+          <SidebarV3 />
           <Box m="20px">
             <Box>
               <Datagrid onRowSelection={handleSelectedRow} />

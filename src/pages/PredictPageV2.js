@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { TextField, Button, Container, Typography, Box } from "@mui/material";
 import axios from "axios";
 
-import Sidebar from "../components/Sidebar/Sidebar";
+import SidebarV3 from "../components/SidebarV3/SidebarV3";
 
 const PredictionForm = () => {
   const [formData, setFormData] = useState({});
@@ -30,7 +30,7 @@ const PredictionForm = () => {
 
   return (
     <Box display="flex" className="container">
-      <Sidebar />
+      <SidebarV3 />
       <Container maxWidth="sm">
         <Typography variant="h4" gutterBottom>
           Water Bacteria Prediction

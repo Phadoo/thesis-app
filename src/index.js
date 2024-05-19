@@ -6,6 +6,7 @@ import App from "./App";
 
 import HomePage from "./pages/HomePage";
 import StatisticsPage from "./pages/StatisticsPage";
+import StatisticsPageV2 from "./pages/StatisticsPageV2";
 import ContactPage from "./pages/ContactPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import PredictPage from "./pages/PredictPage";
@@ -19,7 +20,8 @@ const router = createBrowserRouter([
   },
   {
     path: "/statistics",
-    element: <StatisticsPage />,
+    element: <StatisticsPageV2 />,
+    errorElement: <NotFoundPage />,
   },
   {
     path: "/predict",
