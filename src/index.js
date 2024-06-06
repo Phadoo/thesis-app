@@ -23,10 +23,6 @@ const router = createBrowserRouter([
     element: <StatisticsPageV2 />,
     errorElement: <NotFoundPage />,
   },
-  {
-    path: "/predict",
-    element: <PredictPageV2 />,
-  },
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));

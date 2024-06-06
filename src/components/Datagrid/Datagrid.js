@@ -30,7 +30,7 @@ function Datagrid({ onRowSelection }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/get_all_data");
+        const response = await axios.get("http://127.0.0.1:5000/get_all_data");
         setData(response.data);
       } catch (error) {
         setError(error.message);
@@ -74,17 +74,12 @@ function Datagrid({ onRowSelection }) {
     {
       field: "location",
       headerName: "PLACE",
-      width: 250,
-    },
-    {
-      field: "update_text",
-      headerName: "DATE",
-      width: 250,
+      width: 380,
     },
     {
       field: "status",
       headerName: "STATUS",
-      width: 250,
+      width: 330,
     },
     {
       field: "col4",

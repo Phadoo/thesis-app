@@ -18,7 +18,7 @@ export default function HomePage() {
 
   return (
     <div>
-      <Sidebar />
+      <SidebarV3 />
       <br />
       <Button variant="outlined" onClick={handleClickOpen}>
         Dialog Test

@@ -6,9 +6,9 @@ chemical_blueprint = Blueprint('chemical_data', __name__)
 class Chemical(db.Model):
     __tablename__ = 'tbl_chemical'
     chemical_id = db.Column(db.Integer, primary_key=True)
-    nitrate = db.Column(db.String(100))
-    zinc = db.Column(db.String(100))
-    chlorine = db.Column(db.String(100))
+    nitrate = db.Column(db.Numeric(precision=5, scale=2))
+    zinc = db.Column(db.Numeric(precision=5, scale=2))
+    chlorine = db.Column(db.Numeric(precision=5, scale=2))
 
     def __init__(self, nitrate, zinc, chlorine):
         self.nitrate = nitrate
@@ -31,32 +31,6 @@ def all_data():
 @chemical_blueprint.route('/get_chemical_data/<id>', methods = ['GET'])
 def specific_data(id):
     retrieved = Chemical.query.get(id)
-    return chemical_schema.jsonify(retrieved)
-
-@chemical_blueprint.route('/add_chemical_data', methods = ['POST'])
-def add_data():
-    nitrate = request.json['nitrate']
-    zinc = request.json['zinc']
-    chlorine = request.json['chlorine']
-
-    new_data = Chemical(nitrate, zinc, chlorine)
-    db.session.add(new_data)
-    db.session.commit()
-    return chemical_schema.jsonify(new_data)
-
-@chemical_blueprint.route('/update_chemical_data/<id>/', methods = ['PUT'])
-def update_data(id):
-    retrieved = Chemical.query.get(id)
-
-    nitrate = request.json['nitrate']
-    zinc = request.json['zinc']
-    chlorine = request.json['chlorine']
-
-    retrieved.nitrate = nitrate
-    retrieved.zinc = zinc
-    retrieved.chlorine = chlorine
-
-    db.session.commit()
     return chemical_schema.jsonify(retrieved)
 
 @chemical_blueprint.route('/delete_chemical_data/<id>/', methods = ['DELETE'])

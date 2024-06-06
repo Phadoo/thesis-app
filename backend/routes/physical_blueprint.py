@@ -35,35 +35,6 @@ def specific_data(id):
     retrieved = Physical.query.get(id)
     return physical_schema.jsonify(retrieved)
 
-@physical_blueprint.route('/add_physical_data', methods = ['POST'])
-def add_data():
-    temperature = request.json['temperature']
-    ph = request.json['ph']
-    tds = request.json['tds']
-    turbidity = request.json['turbidity']
-
-    data = Physical(temperature, ph, tds, turbidity)
-    db.session.add(data)
-    db.session.commit()
-    return physical_schema.jsonify(data)
-
-@physical_blueprint.route('/update_physical_data/<id>/', methods = ['PUT'])
-def update_data(id):
-    retrieved = Physical.query.get(id)
-
-    temperature = request.json['temperature']
-    ph = request.json['ph']
-    tds = request.json['tds']
-    turbidity = request.json['turbidity']
-
-    retrieved.temperature = temperature
-    retrieved.ph = ph
-    retrieved.tds = tds
-    retrieved.turbidity = turbidity
-
-    db.session.commit()
-    return physical_schema.jsonify(retrieved)
-
 @physical_blueprint.route('/delete_physical_data/<id>/', methods = ['DELETE'])
 def delete_data(id):
     retrieved = Physical.query.get(id)

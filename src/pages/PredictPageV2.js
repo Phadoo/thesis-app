@@ -54,8 +54,8 @@ const PredictionForm = () => {
             onChange={handleChange}
           />
           <TextField
-            name="Total Dissolved Solids"
-            label="Total Dissolved Solids"
+            name="TDS"
+            label="TDS"
             variant="outlined"
             fullWidth
             margin="normal"
@@ -78,14 +78,6 @@ const PredictionForm = () => {
             onChange={handleChange}
           />
           <TextField
-            name="Chlorides"
-            label="Chlorides"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            onChange={handleChange}
-          />
-          <TextField
             name="Zinc"
             label="Zinc"
             variant="outlined"
@@ -94,13 +86,14 @@ const PredictionForm = () => {
             onChange={handleChange}
           />
           <TextField
-            name="Total Fecal Coliform"
-            label="Total Fecal Coliform"
+            name="Chlorides"
+            label="Chlorides"
             variant="outlined"
             fullWidth
             margin="normal"
             onChange={handleChange}
           />
+
           {/* Add more form fields as needed */}
           <Button type="submit" variant="contained" color="primary" fullWidth>
             Predict

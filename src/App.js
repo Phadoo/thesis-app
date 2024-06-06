@@ -8,9 +8,7 @@ import StatisticsPageV2 from "./pages/StatisticsPageV2";
 import HomePage from "./pages/HomePage";
 
 function App() {
-  return (
-    <StatisticsPageV2 />
-  );
+  return <StatisticsPageV2 />;
 }
 
 export default App;

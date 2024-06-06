@@ -9,7 +9,6 @@ class Information(db.Model):
     __tablename__ = 'tbl_information'
     id = db.Column(db.Integer, primary_key=True)
     location = db.Column(db.Text())
-    update_text = db.Column(db.Text())
     status = db.Column(db.Text())
 
     physical_id = db.Column(db.Integer, db.ForeignKey('tbl_physical.physical_id'))
@@ -18,16 +17,15 @@ class Information(db.Model):
     chemical_id = db.Column(db.Integer, db.ForeignKey('tbl_chemical.chemical_id'))
     chemical_table = db.relationship('Chemical', backref='information')
 
-    def __init__(self, location, update_text, status, physical_id, chemical_id):
+    def __init__(self, location, status, physical_id, chemical_id):
         self.location = location
-        self.update_text = update_text
         self.status = status
         self.physical_id = physical_id
         self.chemical_id = chemical_id
 
 class InformationSchema(ma.Schema):
     class Meta:
-        fields = ('id','location', 'update_text', 'status', 'physical_id', 'chemical_id')
+        fields = ('id','location', 'status', 'physical_id', 'chemical_id')
 
 information_schema = InformationSchema()
 informations_schema = InformationSchema(many=True)
@@ -49,29 +47,14 @@ def specific_data(id):
     retrieved = Information.query.get(id)
     return information_schema.jsonify(retrieved)
 
-@information_blueprint.route('/add_information', methods = ['POST'])
-def add_data():
-    location = request.json['location']
-    update_text = request.json['update_text']
-    status = request.json['status']
-    physical_id = request.json['physical_id']
-    chemical_id = request.json['chemical_id']
-
-    new_data = Information(location, update_text, status, physical_id, chemical_id)
-    db.session.add(new_data)
-    db.session.commit()
-    return information_schema.jsonify(new_data)
-
 @information_blueprint.route('/update_information/<id>/', methods = ['PUT'])
 def update_data(id):
     retrieved = Information.query.get(id)
 
     location = request.json['location']
-    update_text = request.json['update_text']
     status = request.json['status']
 
     retrieved.location = location
-    retrieved.update_text = update_text
     retrieved.status = status
 
     db.session.commit()
@@ -85,42 +68,6 @@ def delete_data(id):
     db.session.commit()
 
     return information_schema.jsonify(retrieved)
-
-@information_blueprint.route('/add_information_data', methods = ['POST'])
-def new_add_data():
-    try:
-        location = request.json['location']
-        update_text = request.json['update_text']
-        status = request.json['status']
-
-        temperature = request.json['temperature']
-        ph = request.json['ph']
-        tds = request.json['tds']
-        turbidity = request.json['turbidity']
-        
-        nitrate = request.json['nitrate']
-        zinc = request.json['zinc']
-        chlorine = request.json['chlorine']
-
-        physical = Physical(temperature, ph, tds, turbidity)
-        chemical = Chemical(nitrate, zinc, chlorine)
-        db.session.add(physical)
-        db.session.add(chemical)
-        db.session.commit()
-
-        info = Information(location, update_text, status, physical_id=physical.physical_id, chemical_id=chemical.chemical_id)
-        db.session.add(info)
-        db.session.commit()
-
-        serialized_info = information_schema.dump(info)
-
-        info_dict = serialized_info[0] if isinstance(serialized_info, list) else serialized_info
-
-        return jsonify(info_dict)
-    
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'error':str(e)}), 500
     
 @information_blueprint.route('/get_all_data/<id>/', methods = ['GET'])
 def get_all_data(id):
@@ -149,7 +96,6 @@ def get_complete_data():
         query_result = db.session.query(
             Information.id,
             Information.location,
-            Information.update_text,
             Information.status,
             Physical.temperature,
             Physical.ph,
@@ -167,28 +113,61 @@ def get_complete_data():
         result = [{
             'id': row[0],
             'location': row[1],
-            'update_text': row[2],
-            'status': row[3],
-            'temperature': row[4],
-            'ph': row[5],
-            'tds': row[6],
-            'turbidity': row[7],
-            'nitrate': row[8],
-            'zinc': row[9],
-            'chlorine': row[10]
+            'status': row[2],
+            'temperature': row[3],
+            'ph': row[4],
+            'tds': row[5],
+            'turbidity': row[6],
+            'nitrate': row[7],
+            'zinc': row[8],
+            'chlorine': row[9]
         } for row in query_result]
 
         return jsonify(result)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
-@information_blueprint.route('/get_test', methods = ['GET'])
-def get_test():
+@information_blueprint.route('/new_entry', methods=['GET'])
+def new_entry():
     try:
-        test = Physical.query.all()
+        location = "new entry"
+        status = " "
 
-        result = physicals_schema.dump(test)
+        # Get parameters from the URL
+        temperature = request.args.get('temp')
+        tds = request.args.get('tds')
+        turbidity = request.args.get('turb')
+        
+        # Convert parameters to appropriate types
+        temperature = float(temperature) if temperature else 0
+        tds = float(tds) if tds else 0
+        turbidity = float(turbidity) if turbidity else 0
+        
+        ph = 0
+        nitrate = 0
+        zinc = 0
+        chlorine = 0
 
-        return jsonify(result)
+        # Create Physical and Chemical objects
+        physical = Physical(temperature, ph, tds, turbidity)
+        chemical = Chemical(nitrate, zinc, chlorine)
+
+        # Add to the session and commit
+        db.session.add(physical)
+        db.session.add(chemical)
+        db.session.commit()
+
+        # Create Information object
+        info = Information(location, status, physical_id=physical.physical_id, chemical_id=chemical.chemical_id)
+        db.session.add(info)
+        db.session.commit()
+
+        # Serialize the info object
+        serialized_info = information_schema.dump(info)
+        info_dict = serialized_info[0] if isinstance(serialized_info, list) else serialized_info
+
+        return jsonify(info_dict)
+    
     except Exception as e:
+        db.session.rollback()
         return jsonify({'error': str(e)}), 500
