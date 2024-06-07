@@ -101,26 +101,7 @@ def predict_and_update():
 
         if not physical or not chemical:
             return jsonify({'error': 'Physical or Chemical data not found'}), 404
-
-        # Extract features from the Physical and Chemical tables
-        features = [
-            physical.temperature,
-            physical.ph,
-            physical.tds,
-            physical.turbidity,
-            chemical.nitrate,
-            chemical.zinc,
-            chemical.chlorine  # Assuming 'chlorine' is the correct field for 'Chlorides'
-        ]
-
-        features_array = [np.array(features)]
-
-        # Make the prediction
-        prediction = model.predict(features_array)[0]
-
-        # Update the status with the prediction
-        info.status = prediction
-
+        
         # Update other fields from the JSON data
         info.location = json_data.get('location', info.location)
 
@@ -141,6 +122,27 @@ def predict_and_update():
             chemical.zinc = json_data.get('zinc')
         if 'chlorine' in json_data:
             chemical.chlorine = json_data.get('chlorine')  # Assuming 'chlorine' is the correct field for 'Chlorides'
+
+        # Extract features from the Physical and Chemical tables
+        features = [
+            physical.temperature,
+            physical.ph,
+            physical.tds,
+            physical.turbidity,
+            chemical.nitrate,
+            chemical.zinc,
+            chemical.chlorine  # Assuming 'chlorine' is the correct field for 'Chlorides'
+        ]
+
+        print(f"Features being fed into the model: {features}")  # Print the features
+
+        features_array = [np.array(features)]
+
+        # Make the prediction
+        prediction = model.predict(features_array)[0]
+
+        # Update the status with the prediction
+        info.status = prediction
 
         # Commit the changes
         db.session.commit()
