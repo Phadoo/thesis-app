@@ -131,7 +131,7 @@ def predict_and_update():
             physical.turbidity,
             chemical.nitrate,
             chemical.zinc,
-            chemical.chlorine  # Assuming 'chlorine' is the correct field for 'Chlorides'
+            chemical.chlorine 
         ]
 
         print(f"Features being fed into the model: {features}")  # Print the features

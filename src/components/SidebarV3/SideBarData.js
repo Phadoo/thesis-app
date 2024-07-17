@@ -6,6 +6,6 @@ export const SideBarData = [
   {
     title: "Dashboard",
     icon: <DashboardIcon />,
-    link: "/statistics",
+    link: "/dashboard",
   },
 ];

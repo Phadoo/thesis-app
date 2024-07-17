@@ -1,0 +1,19 @@
+/* src/index.css */
+
+/* Import the font files */
+@font-face {
+    font-family: 'MyFont';
+    src: local('MyFont'), url(./fonts/Merriweather-Black.ttf) format('ttf'),
+      url(./fonts/Merriweather-Black.ttf) format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  /* Apply the font to your elements */
+  body {
+    font-family: 'MyFont', sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'MyFont', serif;
+  }

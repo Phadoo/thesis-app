@@ -4,11 +4,13 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { SideBarData } from "./SideBarData";
 
+import logo from "../../assets/Logo_H2.png";
+
 // Styled components
 const SidebarContainer = styled.div`
   min-height: 100vh;
   width: 270px;
-  background-color: #858585;
+  background-color: #001d4a;
   transition: left 0.3s ease-in-out, width 0.3s ease-in-out;
   position: fixed;
   top: 0;
@@ -19,6 +21,14 @@ const SidebarContainer = styled.div`
     width: 100vw;
     min-height: 300px;
   }
+`;
+
+const LogoContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px; // Adjust based on your logo height
+  padding: 20px; // Padding for spacing
 `;
 
 const SidebarList = styled.ul`
@@ -41,7 +51,7 @@ const SidebarItem = styled.li`
 
     &:hover #icon,
     &.active #icon {
-      color: #4d4d4d;
+      color: #ff6400;
     }
   }
 `;
@@ -86,7 +96,7 @@ const SidebarToggle = styled.button`
   cursor: pointer;
 
   &:hover {
-    background-color: #575757;
+    background-color: #ff6400;
   }
 `;
 
@@ -106,9 +116,13 @@ const Sidebar = () => {
   return (
     <>
       <SidebarContainer isOpen={isOpen}>
-        <div>
-          <img src="src/assets/icon.ico" alt="" />
-        </div>
+        <LogoContainer>
+          <img
+            src={logo}
+            alt="Logo"
+            style={{ width: "100%", height: "auto" }}
+          />
+        </LogoContainer>
         <SidebarMenu>
           <MenuLabel>Menu</MenuLabel>
           <InterfaceLabel>Interface</InterfaceLabel>

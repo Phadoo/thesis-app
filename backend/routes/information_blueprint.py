@@ -131,7 +131,7 @@ def get_complete_data():
 def new_entry():
     try:
         location = "new entry"
-        status = " "
+        status = ""
 
         # Get parameters from the URL
         temperature = request.args.get('temp')

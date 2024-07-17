@@ -15,6 +15,7 @@ from routes.physical_blueprint import physical_blueprint, Physical
 from routes.information_blueprint import information_blueprint, Information
 from routes.reset_id_blueprint import reset_id_blueprint
 from routes.prediction_blueprint import prediction_blueprint
+from routes.email_blueprint import email_blueprint
 
 db.init_app(app)
 
@@ -23,6 +24,7 @@ app.register_blueprint(physical_blueprint)
 app.register_blueprint(information_blueprint)
 app.register_blueprint(reset_id_blueprint)
 app.register_blueprint(prediction_blueprint)
+app.register_blueprint(email_blueprint)
 
 if __name__ == "__main__":
 

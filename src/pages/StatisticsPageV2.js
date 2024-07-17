@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-import { CSVLink, CSVDownload } from "react-csv";
-
-import "../App.css";
+import { CSVLink } from "react-csv";
 
 import Sidebar from "../components/Sidebar/Sidebar";
 import SidebarV3 from "../components/SidebarV3/SidebarV3";
@@ -22,17 +20,20 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  CircularProgress,
+  useTheme,
 } from "@mui/material";
-import InputBase from "@mui/material/InputBase";
 
 import ThermostatIcon from "@mui/icons-material/Thermostat";
 import SpeedIcon from "@mui/icons-material/Speed";
 import WaterIcon from "@mui/icons-material/Water";
 
 export default function StatisticsPage() {
+  const theme = useTheme();
   const [csvData, setCsvData] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     id: "",
     location: "",
@@ -48,6 +49,7 @@ export default function StatisticsPage() {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const response = await axios.get("http://127.0.0.1:5000/get_all_data");
         const formattedData = response.data.map((item) => ({
@@ -63,8 +65,10 @@ export default function StatisticsPage() {
           Chlorine: item.chlorine,
         }));
         setCsvData(formattedData);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
+        setLoading(false);
       }
     };
     fetchData();
@@ -132,207 +136,283 @@ export default function StatisticsPage() {
         <SidebarV3 />
       </Box>
       <Container style={{ maxWidth: "1300px", paddingTop: "30px" }}>
-        <Box display="flex">
-          <Datagrid onRowSelection={handleSelectedRow} />
+        {loading ? (
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            height="100vh"
+          >
+            <CircularProgress />
+          </Box>
+        ) : (
+          <>
+            <Box display="flex">
+              <Datagrid onRowSelection={handleSelectedRow} />
 
-          {/* STATS */}
+              {/* STATS */}
 
-          <Box display="flex" flexDirection="column" gap="10px" ml="20px">
-            <Box
-              backgroundColor="#D9D9D9"
-              borderRadius="15px"
-              boxShadow="0px 4px 10px 0px rgba(0, 0, 0, 0.2)"
-              height="350px"
-            >
-              <Box m="15px" ml="30px">
-                Stats
-              </Box>
+              <Box display="flex" flexDirection="column" gap="10px" ml="20px">
+                <Box
+                  backgroundColor="#FFFFFF"
+                  borderRadius="15px"
+                  boxShadow="0px 4px 10px 0px rgba(0, 0, 0, 0.2)"
+                  height="350px"
+                >
+                  <Box m="15px" ml="30px" color="black">
+                    Stats
+                  </Box>
 
-              <Box
-                ml="30px"
-                display="grid"
-                gridTemplateColumns="repeat(9, 1fr)"
-                gridAutoRows="130px"
-                gap="10px"
-              >
-                {/* ROW 1 */}
+                  <Box
+                    ml="20px"
+                    display="grid"
+                    gridTemplateColumns="repeat(9, 1fr)"
+                    gridAutoRows="130px"
+                    gap="10px"
+                  >
+                    {/* ROW 1 */}
+
+                    <Box
+                      gridColumn="span 4"
+                      backgroundColor="#FFFFFF"
+                      height="130px"
+                      width="130px"
+                    >
+                      <Typography
+                        style={{
+                          padding: "8px",
+                          textDecoration: "underline",
+                          fontWeight: "bold",
+                          fontSize: "15px",
+                        }}
+                      >
+                        Temperature
+                      </Typography>
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        gap="2px"
+                        mt="15px"
+                      >
+                        <Box>
+                          <ThermostatIcon style={{ fontSize: 40 }} />
+                        </Box>
+                        <Box>
+                          <Statbox
+                            title={
+                              temperature
+                                ? `${Math.round(parseFloat(temperature))}°`
+                                : ""
+                            }
+                          />
+                        </Box>
+                      </Box>
+                    </Box>
+                    <Box gridColumn="span 4" backgroundColor="#FFFFFF">
+                      <Typography
+                        style={{
+                          padding: "8px",
+                          textDecoration: "underline",
+                          fontWeight: "bold",
+                          fontSize: "15px",
+                          ml: "5px",
+                        }}
+                      >
+                        pH
+                      </Typography>
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        gap="10px"
+                        mt="15px"
+                      >
+                        <Box ml="6px">
+                          <SpeedIcon style={{ fontSize: 40 }} />
+                        </Box>
+                        <Box>
+                          <Statbox
+                            title={ph ? `${Math.round(parseFloat(ph))}` : ""}
+                          />
+                        </Box>
+                      </Box>
+                    </Box>
+
+                    {/* ROW 2 */}
+
+                    <Box gridColumn="span 4" backgroundColor="#FFFFFF">
+                      <Typography
+                        style={{
+                          padding: "8px",
+                          textDecoration: "underline",
+                          fontWeight: "bold",
+                          fontSize: "15px",
+                        }}
+                      >
+                        TDS
+                      </Typography>
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        gap="10px"
+                        mt="10px"
+                      >
+                        <Box ml="30px">
+                          <Statbox
+                            title={tds ? `${Math.round(parseFloat(tds))}` : ""}
+                          />
+                        </Box>
+                      </Box>
+                    </Box>
+                    <Box gridColumn="span 4" backgroundColor="#FFFFFF">
+                      <Typography
+                        style={{
+                          padding: "8px",
+                          textDecoration: "underline",
+                          fontWeight: "bold",
+                          fontSize: "15px",
+                        }}
+                      >
+                        Turbidity
+                      </Typography>
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        gap="10px"
+                        mt="10px"
+                      >
+                        <Box ml="6px">
+                          <WaterIcon style={{ fontSize: 40 }} />
+                        </Box>
+                        <Box>
+                          <Statbox
+                            title={
+                              turbidity
+                                ? `${Math.round(parseFloat(turbidity))}`
+                                : ""
+                            }
+                          />
+                        </Box>
+                      </Box>
+                    </Box>
+                  </Box>
+                </Box>
+
+                {/* DETAILS */}
 
                 <Box
-                  gridColumn="span 4"
-                  backgroundColor="#B0B0B0"
-                  height="130px"
-                  width="130px"
+                  backgroundColor="#FFFFFF"
+                  borderRadius="15px"
+                  minHeight="300px"
+                  boxShadow="0px 4px 10px 0px rgba(0, 0, 0, 0.2)"
                 >
-                  <Typography style={{ fontSize: "13px", padding: "8px" }}>
-                    Temperature
-                  </Typography>
-                  <Box display="flex" alignItems="center" gap="10px" mt="15px">
-                    <Box ml="5px">
-                      <ThermostatIcon style={{ fontSize: 40 }} />
+                  <Box m="15px" ml="30px" color="black">
+                    Details
+                  </Box>
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    maxWidth="270px"
+                    ml="30px"
+                    gap="20px"
+                  >
+                    <Box mt="5px">
+                      <Detailbox title="Location" description={location} />
                     </Box>
                     <Box>
-                      <Statbox
-                        title={
-                          temperature
-                            ? `${Math.round(parseFloat(temperature))}°`
-                            : ""
-                        }
-                      />
-                    </Box>
-                  </Box>
-                </Box>
-                <Box gridColumn="span 4" backgroundColor="#B0B0B0">
-                  <Typography style={{ fontSize: "13px", padding: "8px" }}>
-                    pH
-                  </Typography>
-                  <Box display="flex" alignItems="center" gap="10px" mt="15px">
-                    <Box ml="13px">
-                      <SpeedIcon style={{ fontSize: 40 }} />
-                    </Box>
-                    <Box>
-                      <Statbox
-                        title={ph ? `${Math.round(parseFloat(ph))}` : ""}
-                      />
-                    </Box>
-                  </Box>
-                </Box>
-
-                {/* ROW 2 */}
-
-                <Box gridColumn="span 4" backgroundColor="#B0B0B0">
-                  <Typography style={{ fontSize: "13px", padding: "8px" }}>
-                    TDS
-                  </Typography>
-                  <Box display="flex" alignItems="center" gap="10px" mt="10px">
-                    <Box ml="30px">
-                      <Statbox
-                        title={tds ? `${Math.round(parseFloat(tds))}` : ""}
-                      />
-                    </Box>
-                  </Box>
-                </Box>
-                <Box gridColumn="span 4" backgroundColor="#B0B0B0">
-                  <Typography style={{ fontSize: "13px", padding: "8px" }}>
-                    Turbidity
-                  </Typography>
-                  <Box display="flex" alignItems="center" gap="10px" mt="10px">
-                    <Box ml="10px">
-                      <WaterIcon style={{ fontSize: 40 }} />
-                    </Box>
-                    <Box>
-                      <Statbox
-                        title={
-                          turbidity
-                            ? `${Math.round(parseFloat(turbidity))}`
-                            : ""
-                        }
-                      />
+                      <Detailbox title="Status" description={status} />
                     </Box>
                   </Box>
                 </Box>
               </Box>
             </Box>
-
-            {/* DETAILS */}
-
-            <Box
-              backgroundColor="#D9D9D9"
-              borderRadius="15px"
-              minHeight="300px"
-              boxShadow="0px 4px 10px 0px rgba(0, 0, 0, 0.2)"
-            >
-              <Box m="15px" ml="30px">
-                Details
-              </Box>
-              <Box
-                display="flex"
-                flexDirection="column"
-                maxWidth="270px"
-                ml="30px"
-                gap="20px"
+            <Box>
+              <CSVLink data={csvData} filename="data.csv">
+                <Button sx={{ color: "gray" }}>Download CSV</Button>
+              </CSVLink>
+              <Button
+                onClick={() => setIsDialogOpen(true)}
+                sx={{ color: "gray" }}
               >
-                <Box mt="5px">
-                  <Detailbox title="Location" description={location} />
-                </Box>
-                <Box>
-                  <Detailbox title="Status" description={status} />
-                </Box>
-              </Box>
+                Edit Data
+              </Button>
             </Box>
-          </Box>
-        </Box>
-        <Box>
-          <CSVLink data={csvData} filename="data.csv">
-            <Button>Download CSV</Button>
-          </CSVLink>
-          <Button onClick={() => setIsDialogOpen(true)}>Edit Data</Button>
-        </Box>
 
-        <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
-          <DialogTitle>Edit Data</DialogTitle>
-          <DialogContent>
-            <Box
-              component="form"
-              onSubmit={handleSubmit}
-              display="flex"
-              flexDirection="column"
-              gap="10px"
-              mt="20px"
-            >
-              <TextField
-                label="ID"
-                name="id"
-                value={formData.id}
-                onChange={handleInputChange}
-                required
-                fullWidth
-              />
-              <TextField
-                label="Location"
-                name="location"
-                value={formData.location}
-                onChange={handleInputChange}
-                fullWidth
-              />
-              <TextField
-                label="pH"
-                name="ph"
-                value={formData.ph}
-                onChange={handleInputChange}
-                fullWidth
-              />
-              <TextField
-                label="Nitrate"
-                name="nitrate"
-                value={formData.nitrate}
-                onChange={handleInputChange}
-                fullWidth
-              />
-              <TextField
-                label="Zinc"
-                name="zinc"
-                value={formData.zinc}
-                onChange={handleInputChange}
-                fullWidth
-              />
-              <TextField
-                label="Chlorine"
-                name="chlorine"
-                value={formData.chlorine}
-                onChange={handleInputChange}
-                fullWidth
-              />
-            </Box>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setIsDialogOpen(false)} color="secondary">
-              Cancel
-            </Button>
-            <Button type="submit" onClick={handleSubmit} color="primary">
-              Submit
-            </Button>
-          </DialogActions>
-        </Dialog>
+            <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
+              <DialogTitle backgroundColor="#ff6400" color="white">
+                Edit Data
+              </DialogTitle>
+              <DialogContent>
+                <Box
+                  component="form"
+                  onSubmit={handleSubmit}
+                  display="flex"
+                  flexDirection="column"
+                  gap="10px"
+                  mt="20px"
+                >
+                  <TextField
+                    label="ID"
+                    name="id"
+                    value={formData.id}
+                    onChange={handleInputChange}
+                    required
+                    fullWidth
+                  />
+                  <TextField
+                    label="Location"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleInputChange}
+                    fullWidth
+                  />
+                  <TextField
+                    label="pH"
+                    name="ph"
+                    value={formData.ph}
+                    onChange={handleInputChange}
+                    fullWidth
+                  />
+                  <TextField
+                    label="Nitrate"
+                    name="nitrate"
+                    value={formData.nitrate}
+                    onChange={handleInputChange}
+                    fullWidth
+                  />
+                  <TextField
+                    label="Zinc"
+                    name="zinc"
+                    value={formData.zinc}
+                    onChange={handleInputChange}
+                    fullWidth
+                  />
+                  <TextField
+                    label="Chlorine"
+                    name="chlorine"
+                    value={formData.chlorine}
+                    onChange={handleInputChange}
+                    fullWidth
+                  />
+                </Box>
+              </DialogContent>
+              <DialogActions>
+                <Button
+                  onClick={() => setIsDialogOpen(false)}
+                  sx={{ color: "gray" }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  onClick={handleSubmit}
+                  sx={{ color: "gray" }}
+                >
+                  Submit
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </>
+        )}
       </Container>
     </Box>
   );

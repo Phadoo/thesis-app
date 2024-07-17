@@ -4,9 +4,23 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 
 import { DataGrid } from "@mui/x-data-grid";
-import Button from "@mui/material/Button";
+import { Button, Typography } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
 
 import DetailDialog from "../DetailDialog/DetailDialog";
+
+const HtmlTooltip = styled(({ className, ...props }) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: "#f5f5f9",
+    color: "rgba(0, 0, 0, 0.87)",
+    maxWidth: 220,
+    fontSize: theme.typography.pxToRem(12),
+    border: "1px solid #dadde9",
+  },
+}));
 
 function Datagrid({ onRowSelection }) {
   const [data, setData] = useState([]);
@@ -15,6 +29,16 @@ function Datagrid({ onRowSelection }) {
   const [selectionModel, setSelectionModel] = useState([]);
   const [open, setOpen] = useState(false);
   const [dialogParams, setDialogParams] = useState(null);
+
+  const determinePotability = (status) => {
+    if (!status) {
+      return ""; // Return an empty string if status is empty or null
+    }
+    if (status === "No Bacteria Presence") {
+      return "Yes";
+    }
+    return "No";
+  };
 
   const handleClickOpen = (params, row) => {
     const { chlorine, nitrate, zinc } = row;
@@ -31,7 +55,12 @@ function Datagrid({ onRowSelection }) {
     const fetchData = async () => {
       try {
         const response = await axios.get("http://127.0.0.1:5000/get_all_data");
-        setData(response.data);
+        // Modify the data to include the potable field
+        const modifiedData = response.data.map((row) => ({
+          ...row,
+          potable: determinePotability(row.status),
+        }));
+        setData(modifiedData);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -68,21 +97,96 @@ function Datagrid({ onRowSelection }) {
     console.log(newSelection);
   };
 
+  const getInterpretation = (status, row) => {
+    const { temperature, tds, turbidity, ph, chlorine, nitrate, zinc } = row;
+    let interpretation = `The status indicates ${status}.`;
+    if (status === "No Bacteria Presence") {
+      if (temperature < 10 || temperature > 22) {
+        interpretation += " Temperature level indicates non-potability.";
+      }
+      if (tds >= 300) {
+        interpretation += " High TDS indicates non-potability.";
+      }
+      if (turbidity > 5) {
+        interpretation += " High turbidity indicates non-potability.";
+      }
+      if (ph < 6.5 || ph > 8.5) {
+        interpretation += " pH level indicates non-potability.";
+      }
+      if (chlorine > 4) {
+        interpretation += " Chlorine content indicates non-potability.";
+      }
+      if (nitrate > 10) {
+        interpretation += " Nitrate content indicates non-potability.";
+      }
+      if (zinc > 5) {
+        interpretation += " Zinc content indicates non-potability.";
+      }
+      interpretation +=
+        " Although the model predicted that there are no bacteria present. Attributes may suggest that the sample is not potable.";
+    }
+    if (
+      status === "Significant Bacteria Presence" ||
+      status === "Minimal Bacteria Presence"
+    ) {
+      if (temperature < 10 || temperature > 22) {
+        interpretation += " Temperature level indicates non-potability.";
+      }
+      if (tds >= 300) {
+        interpretation += " High TDS indicates non-potability.";
+      }
+      if (turbidity > 5) {
+        interpretation += " High turbidity indicates non-potability.";
+      }
+      if (ph < 6.5 || ph > 8.5) {
+        interpretation += " pH level indicates non-potability.";
+      }
+      if (chlorine > 4) {
+        interpretation += " Chlorine content indicates non-potability.";
+      }
+      if (nitrate > 10) {
+        interpretation += " Nitrate content indicates non-potability.";
+      }
+      if (zinc > 5) {
+        interpretation += " Zinc content indicates non-potability.";
+      }
+    }
+    return interpretation;
+  };
+
   const rows = data;
 
   const columns = [
     {
       field: "location",
       headerName: "PLACE",
-      width: 380,
+      width: 250,
     },
     {
       field: "status",
       headerName: "STATUS",
-      width: 330,
+      width: 280,
+      renderCell: (params) => (
+        <HtmlTooltip
+          title={
+            <React.Fragment>
+              <Typography color="inherit">Interpretation:</Typography>
+              {getInterpretation(params.value, params.row)}
+            </React.Fragment>
+          }
+          followCursor
+        >
+          <span>{params.value}</span>
+        </HtmlTooltip>
+      ),
     },
     {
-      field: "col4",
+      field: "potable",
+      headerName: "POTABLE?",
+      width: 180,
+    },
+    {
+      field: "actions",
       headerName: "ACTIONS",
       width: 100,
       renderCell: (params) => {
